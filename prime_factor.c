@@ -19,19 +19,19 @@
 int main(){
     int a, i, j, temp, isprime;
     printf("\nEnter the number : ");
-    scanf("%d", &a);
+    scanf("%d", &a); // Input the number
     printf("\nThe prime factors of %d are :", a);
-    for(i = a/2; i >= 2; i--){
-        if(a % i == 0){
-            temp = i;
-            isprime = 1;
-            for(j = 2; j <= temp/2; j++){
-                if(temp % j == 0){
-                    isprime = 0;
+    for(i = a/2; i >= 2; i--){ // Search for factors of `a`
+        if(a % i == 0){ // `i` is a factor of `a`
+            temp = i; // Store it to a temporary variable
+            isprime = 1; // prime flag
+            for(j = 2; j <= temp/2; j++){ // Search for factors of `temp`
+                if(temp % j == 0){ // Factor of `temp` is found
+                    isprime = 0; // `temp` is not prime
                     break;
                 }
             }
-            if(isprime)
+            if(isprime) // `temp` is prime
                 printf(" %d", i);
         }
     }
