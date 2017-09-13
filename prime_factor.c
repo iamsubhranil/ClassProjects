@@ -21,7 +21,7 @@ int main(){
     printf("\nEnter the number : ");
     scanf("%d", &a);
     printf("\nThe prime factors of %d are :", a);
-    for(i = 2; i <= a/2; i++){
+    for(i = a/2; i >= 2; i--){
         if(a % i == 0){
             temp = i;
             isprime = 1;
