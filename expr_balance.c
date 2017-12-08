@@ -10,19 +10,6 @@ char opening(char closing){
     return closing == ')' ? '(' : closing == '}' ? '{' : '[';
 }
 
-void error(size_t pos, char recieved, char expected){
-    size_t i = 0;
-    printf("[Error]");
-    while(i < (pos + 16)){
-        printf(" ");
-        i++;
-    }
-    printf("^");
-    printf("\n[Error] Bracket mismatch at character %zd : Expected '%c', Received '%c'!\n", (pos+1), 
-                             expected, recieved );
-
-}
-
 int main(){
     char expr[100];
     printf("\nEnter the expression : ");
@@ -41,12 +28,14 @@ int main(){
             case '}':
             case ']':
                 if(sp == 0){
-                    printf("[Error] Unexpected openning brace : '%c'\n", expr[i]);
-                    return 1;
+                    printf("\nUnexpected openning brace : '%c'\n", expr[i]);
+                    sp = 1;
+                    break;
                 }
                 if(stack[sp - 1] != opening(expr[i])){
-                    error(i, expr[i], closing(stack[sp - 1]));
-                    return 1;
+                    printf("\nExpected closing : '%c'\nReceived : '%c'!\n",
+                             closing(stack[sp - 1]), expr[i]);
+                    break;
                 }
                 else
                     sp--;
@@ -54,8 +43,8 @@ int main(){
         i++;
     }
     if(sp == 0) 
-        printf("The expression is valid in terms of paranthesis!\n");
+        printf("The given expression is valid in terms of paranthesis!\n");
     else
-        printf("[Error] One or more unterminated paranthesis found!\n");
+        printf("The given expression is not valid in terms of paranthesis!\n");
     return 0;
 }
