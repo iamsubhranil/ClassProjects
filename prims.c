@@ -4,17 +4,22 @@
 #include <limits.h>
 
 #define inf INT_MAX
+#define MAXSIZE 1000
 
-int ** make_2d(int n){
-    int ** matrix = (int **)malloc(sizeof(int *) * n);
-    for(int i = 0;i < n;i++)
-        matrix[i] = (int *)malloc(sizeof(int) * n);
-    return matrix;
+void print_2d(int matrix[MAXSIZE][MAXSIZE], int n){
+    for(int i = 0;i < n;i++){
+        for(int j = 0;j < n;j++){
+            if(matrix[i][j] == INT_MAX)
+                printf("-- ");
+            else
+                printf("%2d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
 }
-
-int ** prims(int ** gptr, int n, int v0){
+void prims(int gptr[MAXSIZE][MAXSIZE], int n, int v0){
     bool selected[n];
-    int ** tree = make_2d(n), i = 0, j = 0, ne = 0, min, x, y;
+    int tree[MAXSIZE][MAXSIZE], i = 0, j = 0, ne = 0, min, x, y;
     // Initializations
     while(i < n)
         selected[i++] = false;
@@ -42,34 +47,23 @@ int ** prims(int ** gptr, int n, int v0){
         selected[y] = true;
         ne++;
     }
-    return tree;
-}
-
-void print_2d(int ** matrix, int n){
-    for(int i = 0;i < n;i++){
-        for(int j = 0;j < n;j++){
-            if(matrix[i][j] == INT_MAX)
-                printf("-- ");
-            else
-                printf("%2d ", matrix[i][j]);
-        }
-        printf("\n");
-    }
+    printf("\nThe adjacency matrix of the minimal spanning tree of the given graph is : \n");
+    print_2d(tree, n);
 }
 
 int main(){
     int n, v0;
+    int gptr[MAXSIZE][MAXSIZE];
     printf("\nEnter number of vertices : ");
     scanf("%d", &n);
-    int ** gptr = make_2d(n), ** tree = NULL;
     printf("\n(If any two vertices is not connected by an edge, enter 0)");
     printf("\n\n");
     for(int i = 0;i < n;i++){
         for(int j = 0;j < n;j++){
             printf("\b\rEnter the weight between vertices %d and %d : ", (i + 1), (j + 1));
-            scanf("%d", &gptr[i][j]);
+            scanf("%d", &(gptr[i][j]));
             if(gptr[i][j] == 0)
-                gptr[i][j] = INT_MAX;
+                gptr[i][j] = inf;
         }
     }
     printf("\nEnter the starting vertex : ");
@@ -80,18 +74,8 @@ int main(){
     }
     printf("\nThe weighted adjacency matrix of the given graph is : \n");
     print_2d(gptr, n);
-    tree = prims(gptr, n, v0);
-    printf("\nThe adjacency matrix of the minimal spanning tree of the given graph is : \n");
-    print_2d(tree, n);
+    prims(gptr, n, v0);
 freeall:
-    for(int i = 0;i < n;i++){
-        free(gptr[i]);
-        if(tree != NULL)
-            free(tree[i]);
-    }
-    free(gptr);
-    if(tree != NULL)
-        free(tree);
     printf("\n");
     return 0;
 }
