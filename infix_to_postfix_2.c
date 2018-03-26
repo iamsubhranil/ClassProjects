@@ -53,12 +53,31 @@ static Token identifer(){
     return makeToken(TOKEN_IDENTIFIER);
 }
 
+static void printToken(Token t){
+    for(size_t i = 0;i < t.length;i++)
+        printf("%c", t.strStart[i]);
+    printf(" ");
+}
+
 static Token constant(){
     int decimal = 0;
-    while(isdigit(source[pointer]) && decimal < 2){
+    if(source[pointer] == '.' && !isdigit(source[pointer+1])){
+            printf("\n[Error] Wrong usage of '.'!");
+            pointer++;
+            hasErrors++;
+            return makeToken(TOKEN_UNKNOWN); 
+    }
+    while((isdigit(source[pointer]) || source[pointer] == '.')){
+        pointer++;
         if(source[pointer] == '.')
             decimal++;
-        pointer++;
+    }
+    if(decimal > 1 || (decimal==1 && source[pointer-1]=='.')){
+        Token t = makeToken(TOKEN_UNKNOWN);
+        printf("\n[Error] Bad constant : ");
+        hasErrors++;
+        printToken(t);
+        return t;
     }
     return makeToken(TOKEN_CONSTANT);
 }
@@ -127,12 +146,6 @@ static TokenList scanTokens(const char *s){
     }
     length = pointer = start = 0;
     return list;
-}
-
-static void printToken(Token t){
-    for(size_t i = 0;i < t.length;i++)
-        printf("%c", t.strStart[i]);
-    printf(" ");
 }
 
 static void printList(TokenList t){
