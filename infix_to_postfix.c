@@ -92,6 +92,9 @@ static char *source = NULL;
 static size_t length = 0, pointer = 0, start = 0;
 
 static Token makeToken(TokenType type){
+#ifdef DEBUG
+    pdbg("Making token : %d", type);
+#endif
     return (Token){type, &source[start], pointer-start};
 }
 
@@ -101,12 +104,51 @@ static Token identifer(){
     return makeToken(TOKEN_IDENTIFIER);
 }
 
+#ifdef DEBUG
+
+static const char* typeStrings[] = {
+    "TOKEN_IDENTIFIER",
+    "TOKEN_CONSTANT",
+    "TOKEN_PLUS",
+    "TOKEN_MINUS",
+    "TOKEN_STAR",
+    "TOKEN_SLASH",
+    "TOKEN_CAP",
+    "TOKEN_PERCEN",
+    "TOKEN_BRACE_OPEN",
+    "TOKEN_BRACE_CLOSE",
+    "TOKEN_END",
+    "TOKEN_UNKNOWN"
+};
+
+#endif
+
+static void printToken(Token t){
+    for(size_t i = 0;i < t.length;i++)
+        printf("%c", t.strStart[i]);
+#ifdef DEBUG
+    printf("(%s)", typeStrings[t.type]);
+#endif
+    printf(" ");
+}
+
 static Token constant(){
     int decimal = 0;
-    while(isdigit(source[pointer]) && decimal < 2){
+    if(source[pointer] == '.' && !isdigit(source[pointer+1])){
+            perr("Wrong usage of '.'!");
+            pointer++;
+            return makeToken(TOKEN_UNKNOWN); 
+    }
+    while((isdigit(source[pointer]) || source[pointer] == '.')){
+        pointer++;
         if(source[pointer] == '.')
             decimal++;
-        pointer++;
+    }
+    if(decimal > 1 || (decimal==1 && source[pointer-1]=='.')){
+        Token t = makeToken(TOKEN_UNKNOWN);
+        perr("Bad constant : ");
+        printToken(t);
+        return t;
     }
     return makeToken(TOKEN_CONSTANT);
 }
@@ -174,30 +216,6 @@ static TokenList scanTokens(const char *s){
     }
     length = pointer = start = 0;
     return list;
-}
-
-static const char* typeStrings[] = {
-    "TOKEN_IDENTIFIER",
-    "TOKEN_CONSTANT",
-    "TOKEN_PLUS",
-    "TOKEN_MINUS",
-    "TOKEN_STAR",
-    "TOKEN_SLASH",
-    "TOKEN_CAP",
-    "TOKEN_PERCEN",
-    "TOKEN_BRACE_OPEN",
-    "TOKEN_BRACE_CLOSE",
-    "TOKEN_END",
-    "TOKEN_UNKNOWN"
-};
-
-static void printToken(Token t){
-    for(size_t i = 0;i < t.length;i++)
-        printf("%c", t.strStart[i]);
-#ifdef DEBUG
-    printf("(%s)", typeStrings[t.type]);
-#endif
-    printf(" ");
 }
 
 static void printList(TokenList t){
