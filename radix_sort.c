@@ -20,10 +20,7 @@ void sort_radix(int *arr, int count){
     }
 
     // Create 20 buckets, for digits -ve 0-9 and +ve 0-9 respectively
-    int *buckets[20];
-    // Initialize all of them to number_of_elements, just to be on the safe side
-    for(int i = 0; i < 20 ; i++)
-        buckets[i] = (int *)malloc(sizeof(int) * count);
+    int buckets[20][count];
 
     int partExtractor = 10, digitExtractor = 1;
     // Start pass
@@ -62,11 +59,6 @@ void sort_radix(int *arr, int count){
         digitExtractor *= 10;
         passes--;
     }
-    
-    // Free the buckets
-    for(int i = 0; i < 20 ; i++)
-        if(buckets[i] != NULL)
-            free(buckets[i]);
 }
 
 static void print_list(int *arr, int count){
